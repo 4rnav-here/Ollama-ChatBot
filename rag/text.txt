@@ -1,0 +1,358 @@
+Building Modular Data Pipelines with LangChain: A Beginner’s Guide
+Arman Daneshdoost
+
+
+
+
+Imagine you’re building an AI application that needs to process text data — perhaps cleaning it, filtering it, or transforming it into a format ready for analysis. Now, picture doing this with a tool so intuitive that you can chain together multiple steps effortlessly, creating a pipeline that’s both powerful and easy to manage. That’s exactly what LangChain offers with its RunnablePassthrough feature, and it’s the star of a Jupyter notebook I recently explored: "LangChain_RunnablePassthrough.ipynb."
+
+As an AI engineer who’s spent years working with frameworks like PyTorch and LangChain, I’m always on the lookout for tools that make complex tasks accessible to everyone. This notebook is a perfect example of how LangChain simplifies building data processing pipelines, making it a must-read for anyone curious about AI or looking to level up their coding skills. In this article, I’ll walk you through the notebook’s examples, explain why this approach is so powerful, and inspire you to try it out yourself. Let’s dive in!
+
+Why Data Pipelines Matter in AI
+Before we get into the code, let’s talk about why data pipelines are crucial in AI and machine learning. At their core, pipelines are sequences of steps that transform raw data into something usable. In natural language processing (NLP), for instance, you might need to clean text, remove unwanted words, or convert it into a format suitable for a machine learning model. Doing this manually for every project is tedious and error-prone.
+
+That’s where tools like LangChain come in. LangChain is a framework designed to make it easier to build applications powered by language models. One of its standout features is the ability to create chains — sequences of operations that process data step by step. The RunnablePassthrough class is a key part of this, allowing you to pass data through these chains seamlessly.
+
+Think of it like a factory assembly line: each step (or “runnable”) performs a specific task, and RunnablePassthrough ensures the data flows smoothly from one step to the next. This modularity makes it easy to build, test, and scale your pipelines, whether you’re working on a small project or a large-scale application.
+
+What’s in the Notebook?
+The notebook “LangChain_RunnablePassthrough (1).ipynb” demonstrates how to use LangChain’s RunnablePassthrough to create two types of data processing pipelines:
+
+A Simple Pipeline: Converts a list of messages to uppercase.
+A Complex Pipeline: Processes sentences by converting them to uppercase, filtering out those containing forbidden words, and counting the words in the remaining sentences.
+These examples are run in a Google Colab environment with GPU support, making them fast and accessible. Let’s break them down.
+
+Example 1: Simple Uppercase Conversion
+The first example is straightforward — it takes a list of messages and converts each one to uppercase. Here’s how it works:
+
+Step 1: Install Dependencies
+The notebook starts by installing LangChain and its community extensions:
+!pip install -q langchain langchain-community
+Step 2: Import Required Modules
+It imports RunnablePassthrough from langchain_core.runnables:
+from langchain_core.runnables import RunnablePassthrough
+Step 3: Define Input Data
+A list of messages is provided:
+messages = ["Hello", "How are you?", "Goodbye"]
+Step 4: Define a Transformation Function
+A function is created to convert text to uppercase:
+def convert_to_uppercase(messges):
+  return [msg.upper() for msg in messages]
+Step 5: Create the Chain
+Using RunnablePassthrough, a chain is built that passes the input directly to the transformation function:
+input_transformer = RunnablePassthrough()
+chain = input_transformer | convert_to_uppercase
+Step 6: Run the Chain
+The chain is invoked with the input messages:
+response = chain.invoke(messages)
+print(response)
+Output:
+['HELLO', 'HOW ARE YOU?', 'GOODBYE']
+This example shows how RunnablePassthrough can be used to create a basic pipeline with just one transformation step. It’s simple but sets the stage for more complex workflows.
+
+Example 2: Complex Sentence Processing
+The second example is more involved. It processes a list of sentences through multiple steps:
+
+Step 1: Define Input Data
+A list of sentences is provided:
+sentences = [
+    "The quick brown fox jumpes over the lazy dog.",
+    "Hello world!",
+    "Python is an amazing programming language.",
+    "The weather is sunny today.",
+    "This is a secret message"
+]
+Step 2: Define Transformation Functions
+Several functions are defined:
+- convert_to_uppercase: Converts sentences to uppercase.
+
+- filter_sentences: Filters out sentences containing forbidden words (e.g., "SECRET" or "SUNNY").
+
+- count_words: Counts the number of words in each sentence.
+
+- filter_out_forbidden_words: A helper function that filters sentences based on a list of forbidden words (["SECRET", "SUNNY"]).
+
+Step 3: Create the Chain
+The chain is constructed by piping the input through RunnablePassthrough, then applying each transformation in sequence:
+input_transformer = RunnablePassthrough()
+
+chain = (
+    input_transformer
+    | convert_to_uppercase
+    | filter_out_forbidden_words
+    | count_words
+)
+Step 4: Run the Chain
+The chain is invoked with the input sentences:
+result = chain.invoke(sentences)
+print("Word counts after processing:", result)
+Output:
+Word counts after processing: [9, 2, 6]
+This output represents the word counts of the sentences that passed the filter (i.e., those without “SECRET” or “SUNNY”).
+This example demonstrates how RunnablePassthrough can handle multiple transformations, making it easy to build pipelines for more complex tasks.
+
+Why Use LangChain for Pipelines?
+LangChain’s approach to building pipelines has several advantages:
+
+Modularity: Each step in the pipeline is independent, making it easy to add, remove, or modify components without rewriting the entire system.
+Ease of Use: The API is intuitive, allowing even beginners to build sophisticated pipelines with minimal code.
+Scalability: As your project grows, you can extend the pipeline by adding more steps or integrating with other tools.
+Reusability: Components like RunnablePassthrough can be reused across different projects, saving time and effort.
+Compared to traditional methods of building pipelines, LangChain’s chaining mechanism is more flexible and easier to maintain. It’s especially useful for tasks like text preprocessing, where you need to apply multiple transformations in a specific order.
+
+Real-World Applications
+Data processing pipelines like these have countless applications in AI and beyond:
+
+Text Preprocessing for NLP: Clean and transform text data before feeding it into machine learning models, such as for sentiment analysis or text classification.
+Content Moderation: Automatically filter out inappropriate or sensitive content from user-generated text, like comments or reviews.
+Data Analysis: Prepare raw data for analysis by applying a sequence of transformations, such as tokenization or normalization.
+Automated Reporting: Generate structured reports from unstructured data by chaining multiple processing steps, useful for business intelligence or research.
+For example, a social media platform could use a pipeline like this to clean user posts, remove profanity, and analyze sentiment — all in one streamlined process.
+
+Getting Started with the Code
+If you’re inspired to try this out yourself, here’s how to get started:
+
+Set Up Your Environment:
+Open Google Colab or any Jupyter notebook environment.
+Install the required libraries:
+!pip install langchain langchain-community
+2. Run the Code:
+
+Copy the code from the notebook into your environment. Below is the full code for reference:
+from langchain_core.runnables import RunnablePassthrough
+
+messages = ["Hello", "How are you?", "Goodbye"]
+
+input_transformer = RunnablePassthrough()
+
+def convert_to_uppercase(messges):
+  return [msg.upper() for msg in messages]
+
+chain = input_transformer | convert_to_uppercase
+
+response = chain.invoke(messages)
+print(response)
+
+
+
+def convert_to_uppercase(sentences):
+  return [sentence.upper() for sentence in sentences]
+
+def filter_sentences(sentences, forbidden_words):
+  return[sentence for sentence in sentences if not any(word in sentence for word in forbidden_words)]
+
+def count_words(sentences):
+  return [len(sentence.split()) for sentence in sentences]
+
+def filter_out_forbidden_words(sentences):
+  forbidden_words = ["SECRET", "SUNNY"]
+  return filter_sentences(sentences, forbidden_words)
+
+
+sentences = [
+    "The quick brown fox jumpes over the lazy dog.",
+    "Hello world!",
+    "Python is an amazing programming language.",
+    "The weather is sunny today.",
+    "This is a secret message"
+]
+
+
+input_transformer = RunnablePassthrough()
+
+chain = (
+    input_transformer
+    | convert_to_uppercase
+    | filter_out_forbidden_words
+    | count_words
+)
+
+result = chain.invoke(sentences)
+print("Word counts after processing:", result)
+Run the cells step by step to see the outputs.
+3. Experiment:
+
+Try modifying the pipeline to include additional steps, like tokenization or keyword extraction.
+Test it with different datasets, such as customer reviews or social media posts.
+Tips for Success
+Secure Your Setup: If you extend the pipeline to use language models, store API keys securely using environment variables or getpass.
+Handle Errors: Add try-catch blocks to manage unexpected inputs or processing errors.
+Document Your Code: Use comments to explain each step, especially if sharing with others.
+Test Thoroughly: Run your pipeline on various datasets to ensure robustness.
+Taking It Further
+This notebook is just the beginning. Here are some ideas to expand the project:
+
+Add Language Models: Integrate a model like Groq or Google’s Gemini to perform sentiment analysis or text generation after processing.
+Build a UI: Use Streamlit to create a web app where users can input text and see the pipeline’s output.
+Scale Up: Process larger datasets, such as thousands of reviews, to test performance.
+Add Steps: Include transformations like removing stop words or extracting named entities.
+Conclusion: Your Gateway to AI-Powered Pipelines
+LangChain’s RunnablePassthrough is a game-changer for anyone looking to build modular, efficient data processing pipelines. Whether you’re a beginner exploring AI or a seasoned engineer tackling complex workflows, this tool makes it easier than ever to transform raw data into something actionable.
+
+The examples in “LangChain_RunnablePassthrough.ipynb” are a fantastic starting point, showing how to create both simple and complex pipelines with minimal code. From text preprocessing to content moderation, the possibilities are vast. So why not give it a try? Fire up a Jupyter notebook, experiment with the code, and see what you can create. Your next AI project might just start here!
+
+Call to Action
+Have you built a data pipeline before? What cool ideas would you add to this one? Share your thoughts in the comments — I’d love to hear from you! If this article sparked your interest, give it a clap, share it with your network, and dive into the code. Let’s make AI accessible and exciting for everyone! You can follow the repository:
+
+https://github.com/armanjscript/LLM-Mastery/blob/main/LangChain_RunnablePassthrough.ipynb
+
+AI
+Data Pipeline
+Langchain
+Python
+Langchain Tools
+
+
+Arman Daneshdoost
+Written by Arman Daneshdoost
+18 followers
+·
+71 following
+The Researcher, Data Scientist and Web Developer
+
+
+Follow
+No responses yet
+
+Write a response
+
+What are your thoughts?
+
+Cancel
+Respond
+More from Arman Daneshdoost
+Building a PDF Question-Answering App with LangChain and Ollama: A Beginner’s Guide
+Arman Daneshdoost
+Arman Daneshdoost
+
+Building a PDF Question-Answering App with LangChain and Ollama: A Beginner’s Guide
+Imagine you’re buried in a dense PDF — maybe a textbook, a research paper, or a company report — and you need answers fast. You type…
+Apr 25
+1
+Building a Context-Aware Chatbot with LangChain and Ollama: A Beginner’s Guide
+Arman Daneshdoost
+Arman Daneshdoost
+
+Building a Context-Aware Chatbot with LangChain and Ollama: A Beginner’s Guide
+Imagine asking an AI, “What’s the best coffee shop in Seattle?” and then following up with, “Do they have Wi-Fi?” A typical chatbot might…
+Apr 22
+3
+Two Common Strategies in Multiclass Classification
+Arman Daneshdoost
+Arman Daneshdoost
+
+Two Common Strategies in Multiclass Classification
+OvO (One-vs-One) and OvA (One-vs-All) are two common strategies used in multiclass classification to handle problems where data points can…
+Dec 16, 2023
+2
+Building a RAG System with LangChain, Ollama, and Chroma: A Step-by-Step Guide
+Arman Daneshdoost
+Arman Daneshdoost
+
+Building a RAG System with LangChain, Ollama, and Chroma: A Step-by-Step Guide
+Imagine having a personal assistant that not only understands your questions but also has access to a vast repository of knowledge tailored…
+Apr 26
+See all from Arman Daneshdoost
+Recommended from Medium
+Creating an MCP Server and Integrating with LangGraph
+Sajith K
+Sajith K
+
+Creating an MCP Server and Integrating with LangGraph
+The Model Context Protocol (MCP) is an open protocol that standardizes how applications provide context to LLMs. MCP provides a…
+4d ago
+32
+1
+Google Adk + MCP + RAG + Ollama = The Key To Powerful Agentic AI
+Data Science Collective
+In
+
+Data Science Collective
+
+by
+
+Gao Dalie (高達烈)
+
+Google Adk + MCP + RAG + Ollama = The Key To Powerful Agentic AI
+In this Story, I have a super quick tutorial showing you how to create a multi-agent chatbot using Google Adk, MCP, RAG, and Ollama to…
+
+3d ago
+171
+1
+Unlocking AI Tool Calls: Building a Local MCP Server with Ollama
+Pankaj
+Pankaj
+
+Unlocking AI Tool Calls: Building a Local MCP Server with Ollama
+A step-by-step guide to using the Model Context Protocol and Ollama’s on-device LLM to create a secure, extensible and privacy-focused AI…
+
+5d ago
+184
+2
+I spent 5 hours understanding how Uber built their ETL pipelines.
+Data Engineer Things
+In
+
+Data Engineer Things
+
+by
+
+Vu Trinh
+
+I spent 5 hours understanding how Uber built their ETL pipelines.
+Spoiler: They don’t use batch or stream pipelines
+
+May 22
+536
+9
+A Beginner guide to start with Langchain
+AlgoMart
+In
+
+AlgoMart
+
+by
+
+Yash Jain
+
+A Beginner guide to start with Langchain
+I have been building LLM application since ChatGPT came into the market. While building LLM application I have faced a lot of challenges…
+
+Feb 12
+27
+SPLADE model: The input sentence is tokenized and the tokens are the input to the SPLADE model. The model outputs N logit vectors, where each vector is of size |V| (the vocabulary size).
+AI Advances
+In
+
+AI Advances
+
+by
+
+Dr. Leon Eversberg
+
+How to Use SPLADE for Better LLM RAG Retrieval
+Building an advanced RAG pipeline with sparse encoder retrieval models
+
+4d ago
+486
+3
+See more recommendations
+Help
+
+Status
+
+About
+
+Careers
+
+Press
+
+Blog
+
+Privacy
+
+Rules
+
+Terms
+
+Text to speech
